@@ -18,4 +18,4 @@ const deployMarketplace: DeployFunction = async function (hre: HardhatRuntimeEnv
 };
 
 export default deployMarketplace;
-deployMarketplace.tags = ["marketplace"];
+deployMarketplace.tags = ["marketplace", "all"];
