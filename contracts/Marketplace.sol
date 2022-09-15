@@ -30,8 +30,10 @@ contract Marketplace is ReentrancyGuard {
     ) external nonReentrant {
         require(IERC721(erc721).ownerOf(tokenId) == msg.sender, "Token is not owned by sender");
         require(listings[erc721][tokenId] == address(0), "Token is already listed");
-
-        IERC721(erc721).setApprovalForAll(address(this), true);
+        require(
+            IERC721(erc721).isApprovedForAll(msg.sender, address(this)) == true,
+            "Marketplace has no approval"
+        );
 
         listings[erc721][tokenId] = msg.sender;
         listingPrice[erc721][tokenId] = price;
