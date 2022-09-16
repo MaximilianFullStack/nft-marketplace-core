@@ -5,6 +5,9 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
+/** @title NFT Marketplace
+ *  @author Maximilian Mathews
+ */
 contract Marketplace is ReentrancyGuard {
     uint16 public immutable i_adminFee; //50 = 2% fee
     address public immutable i_owner;
@@ -42,7 +45,7 @@ contract Marketplace is ReentrancyGuard {
     }
 
     function buyItem(address erc721, uint256 tokenId) external payable nonReentrant {
-        require(listings[erc721][tokenId] == address(0), "Token is not listed");
+        require(listings[erc721][tokenId] != address(0), "Token is not listed");
         require(
             IERC721(erc721).ownerOf(tokenId) != msg.sender,
             "Token seller cannot buy their token"
@@ -69,7 +72,7 @@ contract Marketplace is ReentrancyGuard {
         delete listingPrice[erc721][tokenId];
     }
 
-    function cancelItem(address erc721, uint256 tokenId) external nonReentrant {
+    function cancelListing(address erc721, uint256 tokenId) external nonReentrant {
         require(listings[erc721][tokenId] == msg.sender, "Only lister can cancel their listing");
 
         delete listings[erc721][tokenId];
