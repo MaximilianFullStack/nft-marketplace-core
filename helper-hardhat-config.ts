@@ -9,6 +9,7 @@ export interface networkConfigInfo {
 export const networkConfig: networkConfigInfo = {
     localhost: {},
     hardhat: {},
+    goerli: {},
 };
 
 export const developmentChains = ["hardhat", "localhost"];

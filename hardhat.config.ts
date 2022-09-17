@@ -15,7 +15,13 @@ const config: HardhatUserConfig = {
         hardhat: {
             chainId: 1337,
         },
+        goerli: {
+            chainId: 5,
+            url: process.env.ALCHEMY_KEY,
+            accounts: [process.env.KEY!],
+        },
     },
+
     gasReporter: {
         enabled: true,
         currency: "USD",
@@ -24,7 +30,9 @@ const config: HardhatUserConfig = {
         coinmarketcap: process.env.COINMARKETCAP_API,
         outputFile: "gas-report.txt",
     },
+
     etherscan: { apiKey: process.env.ETHERSCAN_API },
+
     namedAccounts: {
         deployer: {
             default: 0,
