@@ -200,6 +200,20 @@ describe("Marketplace", async () => {
             assert.equal(lister, "0x0000000000000000000000000000000000000000");
             assert.equal(price.toString(), "0");
         });
+
+        it("Emits event with the correct data", async () => {
+            const signers = await ethers.getSigners();
+            await nft.mint(1);
+            await nft.setApprovalForAll(marketplace.address, true);
+            await marketplace.listItem(nft.address, 0, ethers.utils.parseEther("1"));
+
+            const tx = await marketplace.cancelListing(nft.address, 0);
+            const transactionReceipt = await tx.wait();
+
+            assert.equal(transactionReceipt.events![0].args?.lister, signers[0].address);
+            assert.equal(transactionReceipt.events![0].args?.erc721, nft.address);
+            assert.equal(transactionReceipt.events![0].args?.tokenId, 0);
+        });
     });
 
     describe("updateListing", async () => {
@@ -235,6 +249,28 @@ describe("Marketplace", async () => {
             const price = await marketplace.listingPrice(nft.address, 0);
 
             assert.equal(price.toString(), ethers.utils.parseEther("0.5").toString());
+        });
+
+        it("Emits event with the correct data", async () => {
+            const signers = await ethers.getSigners();
+            await nft.mint(1);
+            await nft.setApprovalForAll(marketplace.address, true);
+            await marketplace.listItem(nft.address, 0, ethers.utils.parseEther("1"));
+
+            const tx = await marketplace.updateListing(
+                nft.address,
+                0,
+                ethers.utils.parseEther("0.5")
+            );
+            const transactionReceipt = await tx.wait();
+
+            assert.equal(transactionReceipt.events![0].args?.lister, signers[0].address);
+            assert.equal(transactionReceipt.events![0].args?.erc721, nft.address);
+            assert.equal(transactionReceipt.events![0].args?.tokenId, 0);
+            assert.equal(
+                transactionReceipt.events![0].args?.price.toString(),
+                ethers.utils.parseEther("0.5").toString()
+            );
         });
     });
 

@@ -24,6 +24,7 @@ contract Marketplace is ReentrancyGuard {
     /** === Events === **/
     event newListing(address lister, address erc721, uint256 tokenId, uint256 price);
     event sale(address seller, address buyer, address erc721, uint256 tokenId, uint256 salePrice);
+    event listingCanceled(address lister, address erc721, uint256 tokenId);
 
     /** === External Functions === **/
     function listItem(
@@ -70,6 +71,8 @@ contract Marketplace is ReentrancyGuard {
 
         delete listings[erc721][tokenId];
         delete listingPrice[erc721][tokenId];
+
+        emit listingCanceled(msg.sender, erc721, tokenId);
     }
 
     function updateListing(
@@ -84,6 +87,8 @@ contract Marketplace is ReentrancyGuard {
         );
 
         listingPrice[erc721][tokenId] = newPrice;
+
+        emit newListing(msg.sender, erc721, tokenId, newPrice);
     }
 
     function withdrawlAdminFees() external nonReentrant {
