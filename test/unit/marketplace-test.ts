@@ -35,13 +35,13 @@ describe("Marketplace", async () => {
             ).to.be.revertedWith("Token is not owned by sender");
         });
 
-        it("Fails if token is already listed", async () => {
+        it("Fails if token is already listed by user", async () => {
             await nft.mint(1);
             await nft.setApprovalForAll(marketplace.address, true);
             await marketplace.listItem(nft.address, 0, ethers.utils.parseEther("1"));
             await expect(
                 marketplace.listItem(nft.address, 0, ethers.utils.parseEther("1"))
-            ).to.be.revertedWith("Token is already listed");
+            ).to.be.revertedWith("Token is already listed by msg sender");
         });
 
         it("Fails if the user does not approve the marketplace", async () => {

@@ -32,7 +32,7 @@ contract Marketplace is ReentrancyGuard {
         uint256 price
     ) external nonReentrant {
         require(IERC721(erc721).ownerOf(tokenId) == msg.sender, "Token is not owned by sender");
-        require(listings[erc721][tokenId] == address(0), "Token is already listed");
+        require(listings[erc721][tokenId] != msg.sender, "Token is already listed by msg sender");
         require(
             IERC721(erc721).isApprovedForAll(msg.sender, address(this)) == true,
             "Marketplace has no approval"
@@ -45,28 +45,21 @@ contract Marketplace is ReentrancyGuard {
     }
 
     function buyItem(address erc721, uint256 tokenId) external payable nonReentrant {
-        require(listings[erc721][tokenId] != address(0), "Token is not listed");
+        address lister = listings[erc721][tokenId];
+        require(lister != address(0), "Token is not listed");
         require(
             IERC721(erc721).ownerOf(tokenId) != msg.sender,
             "Token seller cannot buy their token"
         );
-        require(
-            listingPrice[erc721][tokenId] == msg.value,
-            "Msg value does not match listing price"
-        );
+        uint256 price = listingPrice[erc721][tokenId];
+        require(price == msg.value, "Msg value does not match listing price");
 
         uint256 fee = msg.value / i_adminFee;
-        payable(listings[erc721][tokenId]).transfer(msg.value - fee);
+        payable(lister).transfer(msg.value - fee);
 
-        IERC721(erc721).safeTransferFrom(listings[erc721][tokenId], msg.sender, tokenId);
+        IERC721(erc721).safeTransferFrom(lister, msg.sender, tokenId);
 
-        emit sale(
-            listings[erc721][tokenId],
-            msg.sender,
-            erc721,
-            tokenId,
-            listingPrice[erc721][tokenId]
-        );
+        emit sale(lister, msg.sender, erc721, tokenId, price);
 
         delete listings[erc721][tokenId];
         delete listingPrice[erc721][tokenId];

@@ -4,7 +4,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "hardhat-deploy";
-import "dotenv";
+import "dotenv/config";
 import "hardhat-contract-sizer";
 import "solidity-coverage";
 
@@ -17,7 +17,7 @@ const config: HardhatUserConfig = {
         },
         goerli: {
             chainId: 5,
-            url: process.env.ALCHEMY_KEY,
+            url: process.env.ALCHEMY_KEY!,
             accounts: [process.env.KEY!],
         },
     },
