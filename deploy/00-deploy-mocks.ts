@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { ethers } from "hardhat";
+import { developmentChains } from "../helper-hardhat-config";
 
 const deployMocks: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { getNamedAccounts, deployments, network } = hre;
@@ -9,12 +10,14 @@ const deployMocks: DeployFunction = async function (hre: HardhatRuntimeEnvironme
 
     const args = ["Bob", "BOBS"];
 
-    const mocks = await deploy("NFT", {
-        from: deployer,
-        gasLimit: 20000000,
-        args: args,
-        log: true,
-    });
+    if (developmentChains.includes(network.name)) {
+        const mocks = await deploy("NFT", {
+            from: deployer,
+            gasLimit: 20000000,
+            args: args,
+            log: true,
+        });
+    }
 };
 
 export default deployMocks;

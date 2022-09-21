@@ -1,6 +1,8 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { ethers } from "hardhat";
+import { developmentChains } from "../helper-hardhat-config";
+import verify from "../utils/verify";
 
 const deployMarketplace: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { getNamedAccounts, deployments, network } = hre;
@@ -15,6 +17,11 @@ const deployMarketplace: DeployFunction = async function (hre: HardhatRuntimeEnv
         args: args,
         log: true,
     });
+
+    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API) {
+        console.log("Verifing on Etherscan...");
+        await verify(marketplace.address, args);
+    }
 };
 
 export default deployMarketplace;
